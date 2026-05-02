@@ -1,10 +1,18 @@
+import os
 import requests
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 url = "https://avoin-paikkatieto.maanmittauslaitos.fi/maastotiedot/features/v1/collections/kunta/items"
-auth = ( "6ea2857c-d887-42af-bc6e-37521517fcac", "" )
+api_key = os.environ.get("MML_API_KEY")
+if not api_key:
+    raise EnvironmentError("MML_API_KEY not set. Copy .env.example to .env and fill in your key.")
+auth = (api_key, "")
 
 r = requests.get(url, auth=auth)
+r.raise_for_status()
 data = r.json()
 print(r.status_code)
 

@@ -1,42 +1,281 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── App shell ───────────────────────────────────────── */
+
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* respects mobile browser chrome */
+  overflow: hidden;
+}
+
+.map-wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── UI overlay (floats above map) ───────────────────── */
+
+.ui-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 800;
+  pointer-events: none; /* clicks pass through to map */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  gap: 8px;
+}
+
+/* ── Search group (search bar + dropdown) ────────────── */
+
+.search-group {
+  pointer-events: auto;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (max-width: 600px) {
+  .search-group { max-width: 100%; }
+}
+
+/* ── Search bar ──────────────────────────────────────── */
+
+.search-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #a0aec0;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #1a202c;
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+}
+
+.search-count {
+  font-size: 0.75rem;
+  color: #718096;
+  white-space: nowrap;
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0aec0;
+  font-size: 0.85rem;
+  padding: 0;
+  line-height: 1;
+  min-width: 20px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear:hover {
+  color: #4a5568;
+}
+
+/* ── Legend ──────────────────────────────────────────── */
+
+.legend-wrapper {
+  pointer-events: auto;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.legend-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.legend-title {
+  margin: 0 0 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4a5568;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-size: 0.75rem;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.legend-toggle {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2b6cb0;
+  cursor: pointer;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+  min-height: 44px; /* iOS touch target */
+  min-width: 44px;
+}
+
+.legend-toggle:active {
+  background: rgba(235, 248, 255, 0.97);
+}
+
+/* ── Status screens ──────────────────────────────────── */
+
+.status-screen {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #4a5568;
+  padding: 20px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.status-screen.error { color: #c53030; }
+
+/* ── Autocomplete suggestions ────────────────────────── */
+
+.suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.suggestion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #1a202c;
+  cursor: pointer;
+  gap: 12px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.suggestion-item:hover,
+.suggestion-item.highlighted {
+  background: #ebf8ff;
+  color: #2b6cb0;
 }
 
-.card {
-  padding: 2em;
+.suggestion-pop {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  white-space: nowrap;
 }
 
-.read-the-docs {
-  color: #888;
+.suggestion-item:hover .suggestion-pop,
+.suggestion-item.highlighted .suggestion-pop {
+  color: #90cdf4;
+}
+
+/* ── Bottom button row ───────────────────────────────── */
+
+.bottom-btns {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.chip-btn {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1.5px solid #cbd5e0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #718096;
+  cursor: pointer;
+  min-height: 44px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.chip-btn--active {
+  background: rgba(235, 248, 255, 0.97);
+  border-color: #4299e1;
+  color: #2b6cb0;
+}
+
+.chip-btn:active {
+  background: rgba(214, 243, 255, 0.97);
 }

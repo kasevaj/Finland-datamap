@@ -1,7 +1,7 @@
 
 DROP TABLE IF EXISTS cities;
 
-CREATE TABLE IF NOT EXISTS cities (
+CREATE TABLE cities (
     code TEXT PRIMARY KEY,
     name TEXT,
     population INTEGER,

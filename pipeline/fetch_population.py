@@ -14,24 +14,14 @@ query = {
 }
 
 r = requests.post(url, json=query)
+r.raise_for_status()
 data = r.json()
-
-if r.status_code != 200:
-    raise Exception("API request failed")
-print(r.status_code) 
-
-# print(data["dataset"].keys())
+print(r.status_code)
 
 areas = list(data["dataset"]["dimension"]["Alue"]["category"]["label"].values())
-codes= list(data["dataset"]["dimension"]["Alue"]["category"]["label"].keys())
+codes = list(data["dataset"]["dimension"]["Alue"]["category"]["label"].keys())
 pops = data["dataset"]["value"]
 
-len_areas=len(areas)
-len_pops=len(pops)
-
-# voi suoraan tehdä avain arvo pareja ilman looppia
-
-# parempi tapa jsonin luontiin tietokantaa varten 
 city_pop_dict = {
     code[2:]: {"name": name, "population": pop}
     for code, name, pop in zip(codes, areas, pops)
